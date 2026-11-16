@@ -67,6 +67,44 @@ export function HomePrograms() {
             </TabsContent>
           ))}
         </Tabs>
+
+        <Link
+          href="/programs/quiz"
+          className="group relative mx-auto mt-10 flex max-w-2xl flex-col items-center overflow-hidden rounded-3xl bg-foreground px-6 py-10 text-center text-background transition-colors duration-200 outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/60 sm:px-12 sm:py-14"
+        >
+          {/* Faint dot grid, fading out toward the edges */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{
+              backgroundImage:
+                "radial-gradient(var(--background) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+              maskImage:
+                "radial-gradient(ellipse at center, black 20%, transparent 75%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse at center, black 20%, transparent 75%)",
+            }}
+          />
+
+          <div className="relative flex flex-col items-center">
+            <span className="rounded-full px-3 py-1 text-xs font-medium tracking-wide text-background/80 uppercase ring-1 ring-background/25">
+              Find your path
+            </span>
+            <h3 className="mt-5 font-heading text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
+              Not sure where to start?
+            </h3>
+            <p className="mt-4 max-w-md leading-relaxed text-pretty text-background/70">
+              Answer a few questions about your background and goals. We will
+              show how your skills match your target roles and point you to the
+              program that fits.
+            </p>
+            <span className="mt-8 inline-flex h-11 items-center gap-2 rounded-full bg-background px-6 text-sm font-medium text-foreground transition-colors duration-200 group-hover:bg-background/90">
+              Take the quiz
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </div>
+        </Link>
       </div>
     </section>
   )
