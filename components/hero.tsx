@@ -6,19 +6,31 @@ import { HeroVideo } from "@/components/hero-video"
 import { Button } from "@/components/ui/button"
 
 /**
- * Stand-in stock footage and poster. Replace with the academy's own video
- * (e.g. put a file in /public/videos and use "/videos/hero.mp4").
+ * Stand-in stock footage (Mixkit), played as a short montage of different
+ * scenes. Replace with the academy's own clips, e.g. files in /public/videos
+ * referenced as "/videos/clip-1.mp4".
  */
 const heroVideo = {
-  src: "https://videos.pexels.com/video-files/3129671/3129671-hd_1920_1080_30fps.mp4",
+  sources: [
+    // Programmer at a workstation
+    "https://assets.mixkit.co/videos/41641/41641-720.mp4",
+    // Teacher explaining a chart to a student
+    "https://assets.mixkit.co/videos/50114/50114-720.mp4",
+    // Students working together
+    "https://assets.mixkit.co/videos/48166/48166-720.mp4",
+    // Team presentation with graphics
+    "https://assets.mixkit.co/videos/42666/42666-720.mp4",
+    // People moving between data visualisations
+    "https://assets.mixkit.co/videos/5410/5410-720.mp4",
+  ],
   poster:
     "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=70",
-  label: "Learners working together on code",
+  label: "Montage of learners coding, studying, and presenting data",
 }
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden border-b bg-background">
+    <section className="relative -mt-16 flex min-h-svh items-center overflow-hidden border-b pt-16 section-wash-ttb">
       <div className="mx-auto grid w-full max-w-6xl gap-14 xl:max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-8 lg:py-32">
         {/* Copy */}
         <div className="lg:col-span-7 xl:col-span-5">

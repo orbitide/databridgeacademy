@@ -87,6 +87,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --wash-from: oklch(0.62 0.09 192 / 0.2);
 }
 
 .dark {
@@ -124,6 +125,7 @@
   --brand: oklch(0.75 0.1 192);
   --brand-foreground: oklch(0.17 0.02 200);
   --brand-muted: oklch(0.24 0.04 220);
+  --wash-from: oklch(0.75 0.1 192 / 0.2);
 }
 
 @layer base {
@@ -135,6 +137,12 @@
   }
   html {
     @apply font-sans;
+  }
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="menuitem"] {
+    cursor: pointer;
   }
 }
 /* Binary digits that flip between 1 and 0 (hero "Production-grade projects" card). */
@@ -174,5 +182,45 @@
   }
   .bit-second {
     animation: bit-show-second var(--bit-duration, 1.6s) linear var(--bit-delay, 0s) infinite;
+  }
+}
+
+/* Per-section background wash: a very faint tint that starts at the top edge and fades out by the bottom. */
+@layer components {
+  .section-wash-ttb {
+    background-image: linear-gradient(to bottom, var(--wash-from), transparent);
+  }
+}
+
+/* Growth chart: lines draw in, washes fade in (home job-market section). */
+.chart-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes chart-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chart-line {
+    animation: chart-draw 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .chart-fade {
+    animation: chart-fade 0.9s ease-out 0.5s both;
   }
 }

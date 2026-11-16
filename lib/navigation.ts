@@ -73,12 +73,6 @@ export const programGroups: NavGroup[] = [
     label: "For tech professionals",
     links: [
       {
-        title: "Deep Learning",
-        href: programHref("deep-learning"),
-        description:
-          "Neural networks for vision, language, and sequence data, for engineers who already code.",
-      },
-      {
         title: "LLM & Agent Engineering",
         href: programHref("llm-agent-engineering"),
         description:

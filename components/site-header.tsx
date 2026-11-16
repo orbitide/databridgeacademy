@@ -35,8 +35,24 @@ import { cn } from "@/lib/utils"
 const DESKTOP_QUERY = "(min-width: 1024px)"
 
 export function SiteHeader() {
+  const [scrolled, setScrolled] = React.useState(false)
+
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full transition-colors duration-200",
+        scrolled
+          ? "bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/80"
+          : "bg-transparent"
+      )}
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <BrandLogo />
         <DesktopNav />
