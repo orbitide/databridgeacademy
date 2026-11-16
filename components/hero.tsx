@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
+import { HeroHighlights } from "@/components/hero-highlights"
 import { HeroVideo } from "@/components/hero-video"
 import { Button } from "@/components/ui/button"
 
@@ -18,10 +19,10 @@ const heroVideo = {
 export function Hero() {
   return (
     <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden border-b bg-background">
-      <div className="mx-auto grid w-full max-w-6xl gap-14 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-8 lg:py-32">
+      <div className="mx-auto grid w-full max-w-6xl gap-14 xl:max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-8 lg:py-32">
         {/* Copy */}
-        <div className="lg:col-span-7">
-          <h1 className="font-heading text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+        <div className="lg:col-span-7 xl:col-span-5">
+          <h1 className="font-heading text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl xl:text-[3.25rem]">
             Learn the skills.
             <br />
             <span className="text-brand">Build the career.</span>
@@ -50,12 +51,14 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Video */}
-        <div className="relative lg:col-span-5">
+        {/* Video with overlapping cards */}
+        <div className="relative lg:col-span-5 xl:col-span-7 xl:px-40">
           <HeroVideo
             {...heroVideo}
-            className="relative aspect-[4/5] shadow-sm sm:aspect-video lg:aspect-[4/5]"
+            className="relative aspect-[3/4] shadow-sm sm:aspect-[4/3] lg:aspect-[2/3]"
           />
+
+          <HeroHighlights />
         </div>
       </div>
     </section>

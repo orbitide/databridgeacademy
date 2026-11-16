@@ -137,3 +137,19 @@
     @apply font-sans;
   }
 }
+/* Blinking binary digits (hero "Production-grade projects" card). */
+@keyframes bit-blink {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bit-blink {
+    animation: bit-blink 2.4s ease-in-out infinite;
+  }
+}
