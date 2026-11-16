@@ -1,0 +1,56 @@
+/**
+ * Share of U.S. job postings that mention AI, monthly average of Indeed's daily
+ * series (7-day trailing average, percent of all postings).
+ *
+ * Source: Indeed Hiring Lab, AI Tracker (https://github.com/hiring-lab/ai-tracker),
+ * licensed CC BY 4.0, so Hiring Lab must be credited wherever this is shown.
+ * Generated from AI_posting.csv (US rows), data through 2026-09-30. Refreshed
+ * monthly upstream; regenerate to update.
+ */
+export const aiPostingShare: { month: string; share: number }[] = [
+  { month: "2023-01", share: 2.16 },
+  { month: "2023-02", share: 2.10 },
+  { month: "2023-03", share: 1.93 },
+  { month: "2023-04", share: 1.81 },
+  { month: "2023-05", share: 1.75 },
+  { month: "2023-06", share: 1.71 },
+  { month: "2023-07", share: 1.72 },
+  { month: "2023-08", share: 1.74 },
+  { month: "2023-09", share: 1.81 },
+  { month: "2023-10", share: 1.84 },
+  { month: "2023-11", share: 1.86 },
+  { month: "2023-12", share: 1.91 },
+  { month: "2024-01", share: 1.96 },
+  { month: "2024-02", share: 2.05 },
+  { month: "2024-03", share: 2.06 },
+  { month: "2024-04", share: 2.03 },
+  { month: "2024-05", share: 2.05 },
+  { month: "2024-06", share: 2.18 },
+  { month: "2024-07", share: 2.21 },
+  { month: "2024-08", share: 2.25 },
+  { month: "2024-09", share: 2.38 },
+  { month: "2024-10", share: 2.46 },
+  { month: "2024-11", share: 2.57 },
+  { month: "2024-12", share: 2.67 },
+  { month: "2025-01", share: 2.73 },
+  { month: "2025-02", share: 2.79 },
+  { month: "2025-03", share: 2.76 },
+  { month: "2025-04", share: 2.78 },
+  { month: "2025-05", share: 2.80 },
+  { month: "2025-06", share: 3.00 },
+  { month: "2025-07", share: 3.16 },
+  { month: "2025-08", share: 3.35 },
+  { month: "2025-09", share: 3.56 },
+  { month: "2025-10", share: 3.87 },
+  { month: "2025-11", share: 4.19 },
+  { month: "2025-12", share: 4.38 },
+  { month: "2026-01", share: 4.56 },
+  { month: "2026-02", share: 4.93 },
+  { month: "2026-03", share: 5.22 },
+  { month: "2026-04", share: 5.49 },
+  { month: "2026-05", share: 5.71 },
+  { month: "2026-06", share: 5.88 },
+  { month: "2026-07", share: 6.26 },
+  { month: "2026-08", share: 6.59 },
+  { month: "2026-09", share: 7.15 },
+]

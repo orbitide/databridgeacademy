@@ -4,6 +4,7 @@ import {
   Bot,
   Brain,
   ChartColumn,
+  Clock,
   Code,
   Database,
   Server,
@@ -14,6 +15,7 @@ import {
 
 import { SectionHeading } from "@/components/section-heading"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { programGroups } from "@/lib/navigation"
 
 /** Icon per program slug (the last segment of the program href). */
@@ -39,35 +41,43 @@ export function HomePrograms() {
   return (
     <section className="border-b bg-background">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 xl:max-w-7xl">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading
-            eyebrow="Programs"
-            title="A path for where you are, and where you want to go"
-            description="Whether you are starting out or already shipping code, each program is built around real projects and mentor feedback."
-          />
-          <Link
-            href="/programs"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-brand underline-offset-4 hover:underline"
-          >
-            See all programs
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
+        <SectionHeading
+          eyebrow="Programs"
+          title="A path for where you are, and where you want to go"
+          description="Whether you are starting out or already shipping code, each program is built around real projects and mentor feedback."
+        />
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-8">
-          {programGroups.map((group) => (
-            <div
-              key={group.label}
-              className="flex flex-col rounded-2xl bg-secondary/60 p-5 ring-1 ring-foreground/5 sm:p-6"
-            >
-              <h3 className="font-heading text-xl font-semibold">
+        <Tabs defaultValue={programGroups[0].label} className="mt-12">
+          <TabsList>
+            {programGroups.map((group) => (
+              <TabsTrigger key={group.label} value={group.label}>
                 {group.label}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {groupIntro[group.label]}
-              </p>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-              <ul className="mt-5 flex flex-col gap-2.5">
+          {programGroups.map((group) => (
+            <TabsContent
+              key={group.label}
+              value={group.label}
+              className="flex flex-col gap-6"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-muted-foreground">
+                  {groupIntro[group.label]}
+                </p>
+                {group.footer && (
+                  <Link
+                    href={group.footer.href}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-brand underline-offset-4 hover:underline"
+                  >
+                    {group.footer.title}
+                    <ArrowRight className="size-4" />
+                  </Link>
+                )}
+              </div>
+
+              <ul className="flex flex-col gap-3">
                 {group.links.map((program) => {
                   const slug = program.href.split("/").pop() ?? ""
                   const Icon = programIcons[slug] ?? Code
@@ -75,41 +85,40 @@ export function HomePrograms() {
                     <li key={program.href}>
                       <Link
                         href={program.href}
-                        className="group flex items-start gap-4 rounded-xl bg-card p-4 shadow-xs ring-1 ring-foreground/10 transition-colors outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring/60"
+                        className="group grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-3 rounded-2xl bg-card p-4 shadow-xs ring-1 ring-foreground/10 transition-colors outline-none hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring/60 sm:grid-cols-[auto_1fr_8rem_8rem_auto] sm:p-5"
                       >
                         <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand">
                           <Icon className="size-5" />
                         </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex flex-wrap items-center gap-2">
-                            <span className="font-medium">{program.title}</span>
-                            {program.badge && (
-                              <Badge variant="secondary">{program.badge}</Badge>
-                            )}
+
+                        <span className="flex min-w-0 flex-wrap items-center gap-2">
+                          <h3 className="font-heading text-lg leading-snug font-semibold">
+                            {program.title}
+                          </h3>
+                          {program.badge && (
+                            <Badge variant="secondary">{program.badge}</Badge>
+                          )}
+                        </span>
+
+                        <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand sm:order-last" />
+
+                        <span className="col-span-3 flex items-center justify-between gap-4 border-t pt-3 sm:contents">
+                          <span className="flex items-center gap-1.5 text-sm font-medium">
+                            <Clock className="size-4 text-muted-foreground" />
+                            {program.duration}
                           </span>
-                          <span className="mt-1 block text-sm leading-snug text-muted-foreground">
-                            {program.description}
+                          <span className="font-heading text-lg font-semibold text-brand sm:text-right">
+                            {program.price}
                           </span>
                         </span>
-                        <ArrowRight className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand" />
                       </Link>
                     </li>
                   )
                 })}
               </ul>
-
-              {group.footer && (
-                <Link
-                  href={group.footer.href}
-                  className="mt-5 inline-flex items-center gap-1.5 self-start text-sm font-medium text-brand underline-offset-4 hover:underline"
-                >
-                  {group.footer.title}
-                  <ArrowRight className="size-4" />
-                </Link>
-              )}
-            </div>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
       </div>
     </section>
   )

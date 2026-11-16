@@ -40,22 +40,6 @@ export const demandRoles: DemandRole[] = [
     href: "https://www.bls.gov/ooh/computer-and-information-technology/computer-and-information-research-scientists.htm",
   },
   {
-    title: "Information security analysts",
-    growth: 21,
-    jobs2025: 192_900,
-    jobs2035: 233_400,
-    medianPay: 129_180,
-    href: "https://www.bls.gov/ooh/computer-and-information-technology/information-security-analysts.htm",
-  },
-  {
-    title: "Operations research analysts",
-    growth: 12,
-    jobs2025: 113_100,
-    jobs2035: 126_600,
-    medianPay: 88_940,
-    href: "https://www.bls.gov/ooh/math/operations-research-analysts.htm",
-  },
-  {
     title: "Software developers",
     growth: 10,
     jobs2025: 1_717_800,

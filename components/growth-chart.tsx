@@ -1,445 +1,252 @@
 "use client"
 
 import * as React from "react"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 
-import { cn } from "@/lib/utils"
-import { demandRoles } from "@/lib/job-market"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart"
+import { aiPostingShare } from "@/lib/ai-postings"
+import { demandRoles, skillTimeline } from "@/lib/job-market"
 
 /**
- * Large line chart of projected U.S. employment growth, indexed to 2025 = 100.
+ * Dark-section line chart of real data: the share of U.S. job postings that
+ * mention AI, by month (Indeed Hiring Lab AI Tracker, CC BY 4.0). Dots mark
+ * the month each skill in `skillTimeline` entered the toolkit.
  *
- * Only two points per occupation are real BLS data: the 2025 estimate and the
- * 2035 projection. The years in between assume steady annual growth, and the
- * chart says so. One occupation is emphasised at a time (accent), the rest sit
- * in gray; the legend switches the emphasis.
+ * The headline "+35%" is a separate, real figure: the BLS projection for
+ * data scientists, 2025–35.
  */
 
-const START = 2025
-const END = 2035
-const SPAN = END - START
-const YEARS = Array.from({ length: SPAN + 1 }, (_, i) => START + i)
-const Y_MIN = 100
-const Y_MAX = 140
-const Y_TICKS = [100, 110, 120, 130, 140]
+const ACCENT = "oklch(0.82 0.11 192)"
+const NAVY = "oklch(0.2 0.05 262)"
 
-const SERIES = demandRoles.map((role) => {
-  const ratio = role.jobs2035 / role.jobs2025
-  return {
-    ...role,
-    values: YEARS.map((_, i) => 100 * Math.pow(ratio, i / SPAN)),
-  }
-})
+const chartConfig = {
+  share: { label: "Postings mentioning AI", color: ACCENT },
+} satisfies ChartConfig
 
-const compact = new Intl.NumberFormat("en-US", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-})
-const full = new Intl.NumberFormat("en-US")
-const usd = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-})
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+]
+
+/** "Apr 2023" -> "2023-04" */
+const monthKey = (d: string) => {
+  const [mon, year] = d.split(" ")
+  return `${year}-${String(MONTHS.indexOf(mon) + 1).padStart(2, "0")}`
+}
+/** "2023-04" -> "Apr 2023" */
+const monthLabel = (k: string) => `${MONTHS[+k.slice(5) - 1]} ${k.slice(0, 4)}`
+/** "Apr 2023" -> "Apr ’23" (small-screen list) */
+const shortDate = (d: string) => d.replace(/ 20(\d\d)$/, " ’$1")
+
+const skillByMonth = new Map(
+  skillTimeline.map((s) => [monthKey(s.date), s.skill])
+)
+
+const data = aiPostingShare.map((p) => ({
+  ...p,
+  skill: skillByMonth.get(p.month),
+}))
+const LAST = data.length - 1
+const YEAR_TICKS = data.filter((p) => p.month.endsWith("-01")).map((p) => p.month)
+
+const first = data[0]
+const low = data.reduce((a, b) => (b.share < a.share ? b : a))
+const latest = data[LAST]
+
+const projected = demandRoles.find((r) => r.title === "Data scientists")!.growth
+
+/** Dots only on skill milestones and the latest month. */
+function Dot({ cx, cy, index }: { cx?: number; cy?: number; index?: number }) {
+  if (cx == null || cy == null || index == null) return <g />
+  const point = data[index]
+  const end = index === LAST
+  if (!point.skill && !end) return <g />
+  return (
+    <g>
+      <circle
+        cx={cx}
+        cy={cy}
+        r={end ? 6 : 5}
+        strokeWidth={2.5}
+        stroke={NAVY}
+        fill={ACCENT}
+      />
+      {point.skill && (
+        <text
+          x={cx + 8}
+          y={cy + 24}
+          fontSize={13}
+          fontWeight={600}
+          fill="white"
+          className="max-sm:hidden"
+        >
+          {point.skill}
+        </text>
+      )}
+      {end && (
+        <text
+          x={cx}
+          y={cy - 14}
+          textAnchor="end"
+          fontSize={13}
+          fontWeight={600}
+          fill={ACCENT}
+        >
+          {point.share.toFixed(1)}%
+        </text>
+      )}
+    </g>
+  )
+}
 
 export function GrowthChart() {
-  const wrapRef = React.useRef<HTMLDivElement>(null)
-  const [width, setWidth] = React.useState(880)
+  const ref = React.useRef<HTMLDivElement>(null)
   const [visible, setVisible] = React.useState(false)
-  const [active, setActive] = React.useState(0)
-  const [hover, setHover] = React.useState<number | null>(null)
+  const [animate, setAnimate] = React.useState(true)
 
   React.useEffect(() => {
-    const el = wrapRef.current
+    const el = ref.current
     if (!el) return
-    const ro = new ResizeObserver(([entry]) => {
-      const w = Math.round(entry.contentRect.width)
-      if (w > 0) setWidth(w)
-    })
-    ro.observe(el)
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          setAnimate(
+            !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          )
           setVisible(true)
           io.disconnect()
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.35 }
     )
     io.observe(el)
-    return () => {
-      ro.disconnect()
-      io.disconnect()
-    }
+    return () => io.disconnect()
   }, [])
 
-  const narrow = width < 520
-  const m = {
-    top: 20,
-    right: narrow ? 48 : 72,
-    bottom: 36,
-    left: narrow ? 36 : 48,
-  }
-  const height = narrow ? 300 : Math.round(Math.min(480, width * 0.5))
-  const plotW = width - m.left - m.right
-  const plotH = height - m.top - m.bottom
-
-  const x = (i: number) => m.left + (i / SPAN) * plotW
-  const y = (v: number) =>
-    m.top + (1 - (v - Y_MIN) / (Y_MAX - Y_MIN)) * plotH
-
-  const linePath = (values: number[]) =>
-    values
-      .map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
-      .join(" ")
-
-  const current = SERIES[active]
-  const areaPath = `${linePath(current.values)} L${x(SPAN).toFixed(1)} ${y(
-    Y_MIN
-  ).toFixed(1)} L${x(0).toFixed(1)} ${y(Y_MIN).toFixed(1)} Z`
-
-  const xTickYears = narrow ? [2025, 2030, 2035] : [2025, 2027, 2029, 2031, 2033, 2035]
-
-  function onPointerMove(e: React.PointerEvent<SVGRectElement>) {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const ratio = (e.clientX - rect.left) / rect.width
-    setHover(Math.min(SPAN, Math.max(0, Math.round(ratio * SPAN))))
-  }
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === "ArrowRight") {
-      e.preventDefault()
-      setHover((h) => Math.min(SPAN, (h ?? -1) + 1))
-    } else if (e.key === "ArrowLeft") {
-      e.preventDefault()
-      setHover((h) => Math.max(0, (h ?? 1) - 1))
-    } else if (e.key === "Escape") {
-      setHover(null)
-    }
-  }
-
-  const tooltipRows =
-    hover === null
-      ? []
-      : SERIES.map((s, i) => ({ s, i, v: s.values[hover] })).sort(
-          (a, b) => b.v - a.v
-        )
-
   return (
-    <div className="rounded-2xl bg-card p-5 shadow-xs ring-1 ring-foreground/10 sm:p-8">
-      {/* Headline figure for the emphasised occupation */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            {current.title}
+    <div className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/10 sm:p-6">
+      <p className="text-xs text-white/55">
+        Share of U.S. job postings mentioning AI
+      </p>
+      <div
+        ref={ref}
+        role="img"
+        aria-label={`Line chart of the share of U.S. job postings that mention AI, by month. It was ${first.share.toFixed(
+          1
+        )} percent in ${monthLabel(first.month)}, fell to a low of ${low.share.toFixed(
+          1
+        )} percent in ${monthLabel(low.month)}, then rose to ${latest.share.toFixed(
+          1
+        )} percent in ${monthLabel(latest.month)}. Dots mark when seven AI skills entered the toolkit. Data scientist jobs are projected to grow ${projected} percent in the U.S. from 2025 to 2035.`}
+        className="relative mt-2 h-[19rem] sm:h-[22rem]"
+      >
+        {/* Headline sits in the empty top-left of the plot */}
+        <div className="pointer-events-none absolute top-1 left-12 z-10 sm:left-16">
+          <p className="text-5xl font-semibold tracking-tight text-[oklch(0.82_0.11_192)] sm:text-6xl">
+            +{projected}%
           </p>
-          <p className="mt-1 flex items-baseline gap-3">
-            <span className="text-6xl font-semibold tracking-tight text-brand sm:text-7xl">
-              +{current.growth}%
-            </span>
-            <span className="max-w-[14rem] text-sm leading-snug text-muted-foreground">
-              projected growth in U.S. employment, 2025–35
-            </span>
+          <p className="mt-1 max-w-[13rem] text-sm leading-snug text-white/70">
+            projected U.S. job growth, 2025–35 (BLS)
           </p>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground tabular-nums sm:text-right">
-          {compact.format(current.jobs2025)} jobs in 2025
-          <br />
-          {compact.format(current.jobs2035)} projected in 2035
-          <br />
-          Median pay {usd.format(current.medianPay)}
-        </p>
-      </div>
 
-      {/* Legend: also the control that moves the emphasis */}
-      <ul className="mt-6 flex flex-wrap gap-2" aria-label="Occupations">
-        {SERIES.map((s, i) => (
-          <li key={s.title}>
-            <button
-              type="button"
-              aria-pressed={i === active}
-              onClick={() => setActive(i)}
-              className={cn(
-                "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm outline-none ring-1 transition-colors focus-visible:ring-3 focus-visible:ring-ring/60",
-                i === active
-                  ? "bg-brand-muted font-medium ring-brand/40"
-                  : "bg-background ring-foreground/10 hover:bg-muted"
-              )}
+        {visible && (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-full w-full [&_.recharts-cartesian-axis-tick_text]:fill-white/60"
+          >
+            <LineChart
+              data={data}
+              margin={{ top: 28, right: 24, bottom: 0, left: 0 }}
             >
-              <span
-                aria-hidden
-                className={cn(
-                  "h-0.5 w-5 rounded-full",
-                  i === active ? "bg-brand" : "bg-foreground/30"
-                )}
+              <CartesianGrid vertical={false} stroke="oklch(1 0 0 / 0.08)" />
+              <XAxis
+                dataKey="month"
+                ticks={YEAR_TICKS}
+                tickFormatter={(k: string) => k.slice(0, 4)}
+                tickLine={false}
+                axisLine={{ stroke: "oklch(1 0 0 / 0.2)" }}
+                tickMargin={10}
+                padding={{ left: 8, right: 8 }}
               />
-              {s.title}
-              <span className="text-muted-foreground tabular-nums">
-                +{s.growth}%
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <p className="mt-6 text-xs text-muted-foreground">
-        Employment index, 2025 = 100
-      </p>
-
-      {/* Chart */}
-      <div
-        ref={wrapRef}
-        tabIndex={0}
-        role="group"
-        aria-label="Line chart of projected employment growth, 2025 to 2035. Use the left and right arrow keys to inspect each year; a data table follows."
-        onKeyDown={onKeyDown}
-        onBlur={() => setHover(null)}
-        className="relative mt-2 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/60"
-      >
-        <svg
-          width={width}
-          height={height}
-          viewBox={`0 0 ${width} ${height}`}
-          role="img"
-          aria-label={`Projected employment index for five data and AI occupations, rising from 100 in 2025 to between ${Math.round(
-            SERIES[SERIES.length - 1].values[SPAN]
-          )} and ${Math.round(SERIES[0].values[SPAN])} in 2035.`}
-          className="block"
-        >
-          {/* Grid */}
-          {Y_TICKS.map((t) => (
-            <g key={t}>
-              <line
-                x1={m.left}
-                x2={m.left + plotW}
-                y1={y(t)}
-                y2={y(t)}
-                strokeWidth={1}
-                className={
-                  t === Y_MIN ? "stroke-foreground/25" : "stroke-border"
+              <YAxis
+                domain={[0, 8]}
+                ticks={[0, 2, 4, 6, 8]}
+                tickFormatter={(v: number) => `${v}%`}
+                tickLine={false}
+                axisLine={false}
+                width={40}
+              />
+              <ChartTooltip
+                cursor={{ stroke: "oklch(1 0 0 / 0.3)" }}
+                content={
+                  <ChartTooltipContent
+                    hideIndicator
+                    className="min-w-40 border-white/15 bg-[oklch(0.26_0.05_262)] text-white [&_.text-muted-foreground]:text-white/70"
+                    labelFormatter={(_, payload) => {
+                      const p = payload?.[0]?.payload as
+                        | (typeof data)[number]
+                        | undefined
+                      return p ? monthLabel(p.month) : null
+                    }}
+                    formatter={(value) => (
+                      <>
+                        <span className="flex-1 text-white/70">
+                          Postings mentioning AI
+                        </span>
+                        <span className="font-mono font-medium tabular-nums">
+                          {Number(value).toFixed(2)}%
+                        </span>
+                      </>
+                    )}
+                  />
                 }
               />
-              <text
-                x={m.left - 8}
-                y={y(t)}
-                dy="0.32em"
-                textAnchor="end"
-                fontSize={12}
-                className="fill-muted-foreground"
-              >
-                {t}
-              </text>
-            </g>
-          ))}
-          {xTickYears.map((yr) => (
-            <text
-              key={yr}
-              x={x(yr - START)}
-              y={height - 12}
-              textAnchor={yr === START ? "start" : yr === END ? "end" : "middle"}
-              fontSize={12}
-              className="fill-muted-foreground"
-            >
-              {yr}
-            </text>
-          ))}
-
-          {/* De-emphasised series */}
-          {SERIES.map((s, i) =>
-            i === active ? null : (
-              <path
-                key={s.title}
-                d={linePath(s.values)}
-                pathLength={1}
-                fill="none"
-                strokeWidth={2}
+              <Line
+                dataKey="share"
+                type="monotone"
+                stroke="var(--color-share)"
+                strokeWidth={3.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="chart-line stroke-foreground/25"
-                data-visible={visible || undefined}
-                style={{
-                  opacity: visible ? undefined : 0,
-                  animationDelay: `${i * 90}ms`,
-                }}
+                dot={Dot}
+                activeDot={{ r: 5, strokeWidth: 2.5, stroke: NAVY }}
+                isAnimationActive={animate}
+                animationDuration={2000}
               />
-            )
-          )}
-
-          {/* Emphasised series: area wash + line, replayed when it changes */}
-          <path
-            key={`area-${active}`}
-            d={areaPath}
-            className="chart-fade fill-brand/10"
-            style={{ opacity: visible ? undefined : 0 }}
-          />
-          <path
-            key={`line-${active}`}
-            d={linePath(current.values)}
-            pathLength={1}
-            fill="none"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="chart-line stroke-brand"
-            style={{ opacity: visible ? undefined : 0 }}
-          />
-
-          {/* End marker + label for the emphasised series */}
-          <g
-            key={`end-${active}`}
-            className="chart-fade"
-            style={{ opacity: visible ? undefined : 0, animationDelay: "1.1s" }}
-          >
-            <circle
-              cx={x(SPAN)}
-              cy={y(current.values[SPAN])}
-              r={5}
-              strokeWidth={2}
-              className="fill-brand stroke-card"
-            />
-            <text
-              x={x(SPAN) + 12}
-              y={y(current.values[SPAN])}
-              dy="0.32em"
-              fontSize={13}
-              fontWeight={600}
-              className="fill-foreground"
-            >
-              +{current.growth}%
-            </text>
-          </g>
-
-          {/* Hover layer */}
-          {hover !== null && (
-            <g>
-              <line
-                x1={x(hover)}
-                x2={x(hover)}
-                y1={m.top}
-                y2={m.top + plotH}
-                strokeWidth={1}
-                className="stroke-foreground/30"
-              />
-              {SERIES.map((s, i) => (
-                <circle
-                  key={s.title}
-                  cx={x(hover)}
-                  cy={y(s.values[hover])}
-                  r={4}
-                  strokeWidth={2}
-                  className={cn(
-                    "stroke-card",
-                    i === active ? "fill-brand" : "fill-muted-foreground"
-                  )}
-                />
-              ))}
-            </g>
-          )}
-
-          <rect
-            x={m.left}
-            y={m.top}
-            width={plotW}
-            height={plotH}
-            fill="transparent"
-            onPointerMove={onPointerMove}
-            onPointerLeave={() => setHover(null)}
-          />
-        </svg>
-
-        {hover !== null && (
-          <div
-            className="pointer-events-none absolute z-10 w-56 rounded-lg bg-popover p-3 text-xs text-popover-foreground shadow-md ring-1 ring-foreground/10"
-            style={{
-              top: m.top,
-              left: x(hover),
-              transform:
-                hover > SPAN / 2
-                  ? "translateX(calc(-100% - 12px))"
-                  : "translateX(12px)",
-            }}
-          >
-            <p className="font-medium">{YEARS[hover]}</p>
-            <ul className="mt-2 flex flex-col gap-1.5">
-              {tooltipRows.map(({ s, i, v }) => (
-                <li
-                  key={s.title}
-                  className={cn(
-                    "flex items-center justify-between gap-3 tabular-nums",
-                    i === active ? "font-medium" : "text-muted-foreground"
-                  )}
-                >
-                  <span className="flex items-center gap-2 truncate">
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "size-2 shrink-0 rounded-full",
-                        i === active ? "bg-brand" : "bg-foreground/30"
-                      )}
-                    />
-                    <span className="truncate">{s.title}</span>
-                  </span>
-                  <span>+{Math.round(v - 100)}%</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            </LineChart>
+          </ChartContainer>
         )}
       </div>
 
-      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-        BLS publishes the 2025 estimate and the 2035 projection. Years in
-        between assume steady annual growth.
-      </p>
+      {/* Small screens: names don't fit on the chart, so list them here. */}
+      <ol className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm sm:hidden">
+        {skillTimeline.map((s) => (
+          <li key={s.skill} className="text-white/85">
+            <span className="text-white/50">{shortDate(s.date)}</span>{" "}
+            {s.skill}
+          </li>
+        ))}
+      </ol>
 
-      <details className="mt-5 text-sm">
-        <summary className="w-fit cursor-pointer font-medium text-brand underline-offset-4 outline-none hover:underline focus-visible:underline">
-          View data table
-        </summary>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[32rem] text-left tabular-nums">
-            <thead className="text-xs text-muted-foreground">
-              <tr className="border-b">
-                <th className="py-2 pr-4 font-medium">Occupation</th>
-                <th className="py-2 pr-4 text-right font-medium">Jobs 2025</th>
-                <th className="py-2 pr-4 text-right font-medium">
-                  Projected 2035
-                </th>
-                <th className="py-2 pr-4 text-right font-medium">Growth</th>
-                <th className="py-2 text-right font-medium">Median pay</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SERIES.map((s) => (
-                <tr key={s.title} className="border-b last:border-0">
-                  <td className="py-2 pr-4">
-                    <a
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline-offset-4 hover:underline"
-                    >
-                      {s.title}
-                    </a>
-                  </td>
-                  <td className="py-2 pr-4 text-right">
-                    {full.format(s.jobs2025)}
-                  </td>
-                  <td className="py-2 pr-4 text-right">
-                    {full.format(s.jobs2035)}
-                  </td>
-                  <td className="py-2 pr-4 text-right">+{s.growth}%</td>
-                  <td className="py-2 text-right">{usd.format(s.medianPay)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </details>
-
-      <p className="mt-5 border-t pt-4 text-xs leading-relaxed text-muted-foreground">
-        Source: U.S. Bureau of Labor Statistics, Occupational Outlook Handbook
-        (projections 2025–35; median pay May 2025). U.S. figures only;
-        projections, not guarantees.
+      <p className="mt-4 text-xs leading-relaxed text-white/55">
+        Source: Indeed Hiring Lab AI Tracker (CC BY 4.0), monthly average to{" "}
+        {monthLabel(latest.month)}. +{projected}%: U.S. BLS projection.
       </p>
     </div>
   )
