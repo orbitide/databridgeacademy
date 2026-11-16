@@ -27,6 +27,7 @@ import {
   authLinks,
   isActivePath,
   mainNav,
+  type NavGroup,
   type NavLink,
 } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
@@ -35,7 +36,7 @@ const DESKTOP_QUERY = "(min-width: 1024px)"
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header className="sticky top-0 z-40 w-full bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <BrandLogo />
         <DesktopNav />
@@ -62,29 +63,30 @@ export function SiteHeader() {
 /* -------------------------------------------------------------------------- */
 
 const topLinkClass =
-  "inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-foreground/75 transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-[active=true]:text-foreground"
+  "inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-foreground/75 transition-colors outline-none hover:bg-background hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-[active=true]:bg-background data-[active=true]:text-foreground"
 
 function DesktopNav() {
   const pathname = usePathname()
 
   return (
     <NavigationMenu className="hidden lg:flex" aria-label="Main">
-      <NavigationMenuList className="gap-0.5">
+      <NavigationMenuList className="gap-0.5 rounded-lg bg-muted p-1">
         {mainNav.map((item) => {
           const active = isActivePath(pathname, item.href)
 
-          if (item.children) {
+          if (item.children || item.groups) {
             return (
               <NavigationMenuItem key={item.title}>
                 <NavigationMenuTrigger
                   data-active={active || undefined}
-                  className="h-9 bg-transparent px-3 text-foreground/75 hover:text-foreground data-[active=true]:text-foreground data-open:text-foreground"
+                  className="h-9 bg-transparent px-3 text-foreground/75 hover:bg-background hover:text-foreground focus:bg-background data-[active=true]:bg-background data-[active=true]:text-foreground data-open:bg-background data-open:text-foreground data-open:hover:bg-background data-open:focus:bg-background data-popup-open:bg-background data-popup-open:hover:bg-background"
                 >
                   {item.title}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <DropdownPanel
-                    links={item.children}
+                    links={item.children ?? []}
+                    groups={item.groups}
                     overview={{ title: `All ${item.title.toLowerCase()}`, href: item.href }}
                     pathname={pathname}
                   />
@@ -98,7 +100,7 @@ function DesktopNav() {
               <NavigationMenuLink
                 asChild
                 active={active}
-                className={cn(topLinkClass, "p-0 px-3 hover:bg-muted")}
+                className={cn(topLinkClass, "p-0 px-3")}
               >
                 <Link href={item.href} aria-current={active ? "page" : undefined}>
                   {item.title}
@@ -112,46 +114,80 @@ function DesktopNav() {
   )
 }
 
+function MenuLink({
+  link,
+  pathname,
+  trackActive = true,
+}: {
+  link: NavLink
+  pathname: string
+  /** Grouped links share a route, so they skip the current-page highlight. */
+  trackActive?: boolean
+}) {
+  const active = trackActive && isActivePath(pathname, link.href)
+  return (
+    <li>
+      <NavigationMenuLink
+        asChild
+        active={active}
+        className="px-4 py-3"
+      >
+        <Link href={link.href} aria-current={active ? "page" : undefined}>
+          <span className="text-base font-medium text-foreground">
+            {link.title}
+          </span>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
+}
+
 function DropdownPanel({
   links,
+  groups,
   overview,
   pathname,
 }: {
   links: NavLink[]
+  groups?: NavGroup[]
   overview: NavLink
   pathname: string
 }) {
   return (
-    <div className="w-[22rem]">
-      <ul className="grid gap-0.5">
-        {links.map((link) => {
-          const active = isActivePath(pathname, link.href)
-          return (
-            <li key={link.href}>
-              <NavigationMenuLink
-                asChild
-                active={active}
-                className="flex-col items-start gap-0.5 px-3 py-2.5"
-              >
-                <Link href={link.href} aria-current={active ? "page" : undefined}>
-                  <span className="text-sm font-medium text-foreground">
-                    {link.title}
-                  </span>
-                  {link.description && (
-                    <span className="text-[0.8125rem] leading-snug text-muted-foreground">
-                      {link.description}
-                    </span>
-                  )}
-                </Link>
-              </NavigationMenuLink>
-            </li>
-          )
-        })}
-      </ul>
+    <div className={groups ? "w-[40rem]" : "w-[20rem]"}>
+      {groups ? (
+        <div className="grid grid-cols-2 gap-3">
+          {groups.map((group) => (
+            <section key={group.label} aria-label={group.label}>
+              <div className="px-3 pt-2 pb-1">
+                <p className="px-1 text-sm font-semibold tracking-wide text-brand uppercase">
+                  {group.label}
+                </p>
+              </div>
+              <ul className="grid gap-0.5">
+                {group.links.map((link) => (
+                  <MenuLink
+                    key={link.href}
+                    link={link}
+                    pathname={pathname}
+                    trackActive={false}
+                  />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <ul className="grid gap-0.5">
+          {links.map((link) => (
+            <MenuLink key={link.href} link={link} pathname={pathname} />
+          ))}
+        </ul>
+      )}
       <div className="mt-1 border-t pt-1">
         <NavigationMenuLink
           asChild
-          className="justify-between px-3 py-2 text-sm font-medium text-brand hover:text-brand"
+          className="justify-between px-4 py-3 text-base font-medium text-brand hover:text-brand"
         >
           <Link href={overview.href}>
             {overview.title}
@@ -228,29 +264,54 @@ function MobileNav() {
                       <span aria-hidden className="size-1.5 rounded-full bg-brand" />
                     )}
                   </Link>
-                  {item.children && (
-                    <ul className="mb-3 ml-1 flex flex-col border-l pl-3">
-                      {item.children.map((child) => {
-                        const childActive = isActivePath(pathname, child.href)
-                        return (
-                          <li key={child.href}>
-                            <Link
-                              href={child.href}
-                              onClick={close}
-                              aria-current={childActive ? "page" : undefined}
-                              className={cn(
-                                "block rounded-md py-2 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                                childActive
-                                  ? "font-medium text-brand"
-                                  : "text-muted-foreground hover:text-foreground"
-                              )}
-                            >
-                              {child.title}
-                            </Link>
-                          </li>
-                        )
-                      })}
-                    </ul>
+                  {item.groups ? (
+                    <div className="mb-3 ml-1 flex flex-col gap-3 border-l pl-3">
+                      {item.groups.map((group) => (
+                        <div key={group.label}>
+                          <p className="pt-1 text-xs font-semibold tracking-wide text-brand uppercase">
+                            {group.label}
+                          </p>
+                          <ul className="mt-1 flex flex-col">
+                            {group.links.map((child) => (
+                              <li key={child.href}>
+                                <Link
+                                  href={child.href}
+                                  onClick={close}
+                                  className="block rounded-md py-2 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                                >
+                                  {child.title}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    item.children && (
+                      <ul className="mb-3 ml-1 flex flex-col border-l pl-3">
+                        {item.children.map((child) => {
+                          const childActive = isActivePath(pathname, child.href)
+                          return (
+                            <li key={child.href}>
+                              <Link
+                                href={child.href}
+                                onClick={close}
+                                aria-current={childActive ? "page" : undefined}
+                                className={cn(
+                                  "block rounded-md py-2 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                                  childActive
+                                    ? "font-medium text-brand"
+                                    : "text-muted-foreground hover:text-foreground"
+                                )}
+                              >
+                                {child.title}
+                              </Link>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )
                   )}
                 </li>
               )
