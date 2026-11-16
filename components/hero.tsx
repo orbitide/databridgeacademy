@@ -69,19 +69,19 @@ const programs: Program[] = [
     icon: ChartScatter,
     name: "Data Science",
     summary: "Analyze, model, and communicate with data.",
-    href: "/programs#data-science",
+    href: "/programs/data-science",
   },
   {
     icon: BrainCircuit,
     name: "Machine Learning",
     summary: "Train, evaluate, and deploy predictive models.",
-    href: "/programs#machine-learning",
+    href: "/programs/machine-learning",
   },
   {
     icon: Sparkles,
     name: "Artificial Intelligence",
     summary: "Build applied AI systems and LLM-powered tools.",
-    href: "/programs#ai",
+    href: "/programs/artificial-intelligence",
   },
 ]
 
