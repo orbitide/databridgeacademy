@@ -65,6 +65,8 @@ export type SampleRole = {
   location: string
   mode: "Remote" | "Hybrid" | "On-site"
   skills: string[]
+  /** Slug of the program that prepares for this role (see lib/navigation.ts). */
+  program: string
 }
 
 export const sampleRoles: SampleRole[] = [
@@ -73,41 +75,48 @@ export const sampleRoles: SampleRole[] = [
     location: "London, UK",
     mode: "Hybrid",
     skills: ["SQL", "Dashboards", "Statistics"],
+    program: "data-analytics",
   },
   {
     title: "Machine Learning Engineer",
     location: "Toronto, Canada",
     mode: "Hybrid",
     skills: ["Python", "PyTorch", "MLOps"],
+    program: "ai-machine-learning",
   },
   {
     title: "AI Automation Specialist",
     location: "Remote, Global",
     mode: "Remote",
     skills: ["APIs", "LLM tools", "Workflows"],
+    program: "ai-automation",
   },
   {
     title: "Data Engineer",
     location: "Berlin, Germany",
     mode: "On-site",
     skills: ["Pipelines", "Cloud", "SQL"],
+    program: "data-engineering",
   },
   {
     title: "LLM Application Developer",
     location: "Singapore",
     mode: "Hybrid",
     skills: ["RAG", "Evaluation", "Python"],
+    program: "llm-agent-engineering",
   },
   {
     title: "Data Scientist",
     location: "Sydney, Australia",
     mode: "Hybrid",
     skills: ["Modeling", "Experimentation", "Python"],
+    program: "data-science",
   },
   {
     title: "Deep Learning Engineer",
     location: "Zurich, Switzerland",
     mode: "Hybrid",
     skills: ["PyTorch", "Computer vision", "NLP"],
+    program: "deep-learning",
   },
 ]

@@ -22,7 +22,7 @@ import { demandRoles, skillTimeline } from "@/lib/job-market"
  */
 
 const ACCENT = "oklch(1 0 0)"
-const NAVY = "oklch(0.28 0 0)"
+const NAVY = "oklch(0.26 0 0)"
 
 const chartConfig = {
   share: { label: "Postings mentioning AI", color: ACCENT },
@@ -144,7 +144,7 @@ export function GrowthChart() {
   }, [])
 
   return (
-    <div className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/10 sm:p-6">
+    <div>
       <p className="text-xs text-white/55">
         Share of U.S. job postings mentioning AI
       </p>
@@ -181,7 +181,7 @@ export function GrowthChart() {
             >
               <CartesianGrid
                 stroke="oklch(1 0 0 / 0.1)"
-                horizontalValues={[0, 1, 2, 3, 4, 5, 6, 7, 8]}
+                horizontalValues={[0, 2, 4, 6, 8]}
                 verticalValues={QUARTER_TICKS}
               />
               <XAxis
