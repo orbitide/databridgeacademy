@@ -31,7 +31,7 @@ const heroVideo = {
 export function Hero() {
   return (
     <section className="relative -mt-16 flex min-h-svh items-center overflow-hidden border-b pt-16 section-wash-ttb">
-      <div className="mx-auto grid w-full max-w-6xl gap-14 xl:max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-8 lg:py-32">
+      <div className="mx-auto grid w-full max-w-6xl gap-14 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-8 lg:py-32">
         {/* Copy */}
         <div className="lg:col-span-7 xl:col-span-5">
           <h1 className="font-heading text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl xl:text-[3.25rem]">
@@ -64,7 +64,7 @@ export function Hero() {
         </div>
 
         {/* Video with overlapping cards */}
-        <div className="relative lg:col-span-5 xl:col-span-7 xl:px-40">
+        <div className="relative lg:col-span-5 xl:col-span-7 xl:px-24">
           <HeroVideo
             {...heroVideo}
             className="relative aspect-[3/4] shadow-sm sm:aspect-[4/3] lg:aspect-[2/3]"

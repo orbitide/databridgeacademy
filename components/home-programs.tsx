@@ -15,7 +15,7 @@ const groupIntro: Record<string, string> = {
 export function HomePrograms() {
   return (
     <section className="border-b bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 xl:max-w-7xl">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
           eyebrow="Programs"
           title="A path for where you are, and where you want to go"

@@ -22,7 +22,7 @@ import { demandRoles, skillTimeline } from "@/lib/job-market"
  */
 
 const ACCENT = "oklch(1 0 0)"
-const NAVY = "oklch(0.15 0 0)"
+const NAVY = "oklch(0.28 0 0)"
 
 const chartConfig = {
   share: { label: "Postings mentioning AI", color: ACCENT },
@@ -63,6 +63,11 @@ const data = aiPostingShare.map((p) => ({
 }))
 const LAST = data.length - 1
 const YEAR_TICKS = data.filter((p) => p.month.endsWith("-01")).map((p) => p.month)
+
+/** Vertical grid lines: the first month of each quarter. */
+const QUARTER_TICKS = data
+  .filter((p) => ["01", "04", "07", "10"].includes(p.month.slice(5)))
+  .map((p) => p.month)
 
 const first = data[0]
 const low = data.reduce((a, b) => (b.share < a.share ? b : a))
@@ -174,7 +179,11 @@ export function GrowthChart() {
               data={data}
               margin={{ top: 28, right: 24, bottom: 0, left: 0 }}
             >
-              <CartesianGrid vertical={false} stroke="oklch(1 0 0 / 0.08)" />
+              <CartesianGrid
+                stroke="oklch(1 0 0 / 0.1)"
+                horizontalValues={[0, 1, 2, 3, 4, 5, 6, 7, 8]}
+                verticalValues={QUARTER_TICKS}
+              />
               <XAxis
                 dataKey="month"
                 ticks={YEAR_TICKS}
@@ -197,7 +206,7 @@ export function GrowthChart() {
                 content={
                   <ChartTooltipContent
                     hideIndicator
-                    className="min-w-40 border-white/15 bg-[oklch(0.22_0_0)] text-white [&_.text-muted-foreground]:text-white/70"
+                    className="min-w-40 border-white/15 bg-[oklch(0.32_0_0)] text-white [&_.text-muted-foreground]:text-white/70"
                     labelFormatter={(_, payload) => {
                       const p = payload?.[0]?.payload as
                         | (typeof data)[number]

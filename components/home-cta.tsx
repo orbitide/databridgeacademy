@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 export function HomeCta() {
   return (
     <section className="bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 xl:max-w-7xl">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="rounded-3xl bg-brand-muted px-6 py-14 text-center ring-1 ring-brand/15 sm:px-12 sm:py-16">
           <h2 className="mx-auto max-w-2xl font-heading text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
             Ready to build your future in data and AI?

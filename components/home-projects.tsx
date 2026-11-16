@@ -21,7 +21,7 @@ const stages = [
 export function HomeProjects() {
   return (
     <section className="border-b bg-[oklch(0.2_0.05_262)] text-white">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-2 lg:gap-16 lg:px-8 xl:max-w-7xl">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div>
           <SectionHeading
             dark

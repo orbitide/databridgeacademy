@@ -165,7 +165,7 @@ export function HeroHighlights() {
       <OverlayCard
         title="Meet your instructors"
         href="/about"
-        className="xl:absolute xl:top-8 xl:left-1 xl:w-52"
+        className="xl:absolute xl:top-36 xl:-left-20 xl:w-52"
       >
         <InstructorsVisual />
       </OverlayCard>

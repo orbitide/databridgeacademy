@@ -33,7 +33,7 @@ const steps = [
 export function HomeMethod() {
   return (
     <section className="border-b bg-secondary/40">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 xl:max-w-7xl">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
           eyebrow="How it works"
           title="From first lesson to first role, one clear path"
