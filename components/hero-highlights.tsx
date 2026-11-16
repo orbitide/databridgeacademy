@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowUpRight, UserRound } from "lucide-react"
+import { UserRound } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -34,14 +34,8 @@ function OverlayCard({
             : "bg-background/60 ring-1 ring-foreground/10 hover:bg-background/75"
         )}
       >
-        <p className="flex items-center justify-between gap-2 text-sm font-medium">
+        <p className="text-sm font-medium">
           {title}
-          <ArrowUpRight
-            className={cn(
-              "size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-              dark ? "text-white/70" : "text-muted-foreground"
-            )}
-          />
         </p>
         {children}
       </Link>
