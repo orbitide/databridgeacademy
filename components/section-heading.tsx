@@ -7,6 +7,7 @@ export function SectionHeading({
   description,
   className,
   dark = false,
+  eyebrowClassName,
 }: {
   eyebrow: string
   title: React.ReactNode
@@ -14,13 +15,16 @@ export function SectionHeading({
   className?: string
   /** Use on dark navy surfaces. */
   dark?: boolean
+  /** Overrides the eyebrow colour. */
+  eyebrowClassName?: string
 }) {
   return (
     <div className={cn("max-w-2xl", className)}>
       <p
         className={cn(
           "text-sm font-medium",
-          dark ? "text-[oklch(0.82_0.11_192)]" : "text-brand"
+          dark ? "text-[oklch(0.82_0.11_192)]" : "text-brand",
+          eyebrowClassName
         )}
       >
         {eyebrow}

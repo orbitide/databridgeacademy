@@ -1,35 +1,10 @@
 import Link from "next/link"
-import {
-  ArrowRight,
-  Bot,
-  Brain,
-  ChartColumn,
-  Clock,
-  Code,
-  Database,
-  Server,
-  ShieldCheck,
-  Workflow,
-  type LucideIcon,
-} from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 import { SectionHeading } from "@/components/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { programGroups } from "@/lib/navigation"
-
-/** Icon per program slug (the last segment of the program href). */
-const programIcons: Record<string, LucideIcon> = {
-  "data-analytics": ChartColumn,
-  "data-science": Database,
-  "ai-machine-learning": Brain,
-  "ai-automation": Workflow,
-  "software-engineering-with-ai": Code,
-  "llm-agent-engineering": Bot,
-  "ai-security": ShieldCheck,
-  "mlops-production-ai": Server,
-  "data-engineering": Database,
-}
 
 const groupIntro: Record<string, string> = {
   "For beginners": "Start from zero. No prior experience required.",
@@ -78,20 +53,14 @@ export function HomePrograms() {
               </div>
 
               <ul className="flex flex-col gap-3">
-                {group.links.map((program) => {
-                  const slug = program.href.split("/").pop() ?? ""
-                  const Icon = programIcons[slug] ?? Code
-                  return (
-                    <li key={program.href}>
-                      <Link
-                        href={program.href}
-                        className="group grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-3 rounded-2xl bg-card p-4 shadow-xs ring-1 ring-foreground/10 transition-colors outline-none hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring/60 sm:grid-cols-[auto_1fr_8rem_8rem_auto] sm:p-5"
-                      >
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-muted text-brand">
-                          <Icon className="size-5" />
-                        </span>
-
-                        <span className="flex min-w-0 flex-wrap items-center gap-2">
+                {group.links.map((program) => (
+                  <li key={program.href}>
+                    <Link
+                      href={program.href}
+                      className="group grid grid-cols-[1fr_auto_auto] items-center gap-x-4 rounded-2xl bg-card p-4 shadow-xs ring-1 ring-foreground/10 transition-colors outline-none hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring/60 sm:gap-x-8 sm:p-5"
+                    >
+                      <span className="min-w-0">
+                        <span className="flex flex-wrap items-center gap-2">
                           <h3 className="font-heading text-lg leading-snug font-semibold">
                             {program.title}
                           </h3>
@@ -99,22 +68,17 @@ export function HomePrograms() {
                             <Badge variant="secondary">{program.badge}</Badge>
                           )}
                         </span>
-
-                        <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand sm:order-last" />
-
-                        <span className="col-span-3 flex items-center justify-between gap-4 border-t pt-3 sm:contents">
-                          <span className="flex items-center gap-1.5 text-sm font-medium">
-                            <Clock className="size-4 text-muted-foreground" />
-                            {program.duration}
-                          </span>
-                          <span className="font-heading text-lg font-semibold text-brand sm:text-right">
-                            {program.price}
-                          </span>
+                        <span className="mt-1 block text-sm text-muted-foreground">
+                          {program.duration}
                         </span>
-                      </Link>
-                    </li>
-                  )
-                })}
+                      </span>
+                      <span className="font-heading text-lg font-semibold text-brand">
+                        {program.price}
+                      </span>
+                      <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand" />
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </TabsContent>
           ))}

@@ -30,10 +30,11 @@ function SampleRoles() {
 
 export function HomeJobMarket() {
   return (
-    <section className="border-b bg-[oklch(0.2_0.05_262)] text-white">
+    <section className="border-b bg-[oklch(0.15_0_0)] text-white">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8 xl:max-w-7xl">
         <SectionHeading
           dark
+          eyebrowClassName="text-white/60"
           eyebrow="Job market"
           title="Demand for data and AI skills keeps growing"
         />

@@ -21,8 +21,8 @@ import { demandRoles, skillTimeline } from "@/lib/job-market"
  * data scientists, 2025–35.
  */
 
-const ACCENT = "oklch(0.82 0.11 192)"
-const NAVY = "oklch(0.2 0.05 262)"
+const ACCENT = "oklch(1 0 0)"
+const NAVY = "oklch(0.15 0 0)"
 
 const chartConfig = {
   share: { label: "Postings mentioning AI", color: ACCENT },
@@ -157,7 +157,7 @@ export function GrowthChart() {
       >
         {/* Headline sits in the empty top-left of the plot */}
         <div className="pointer-events-none absolute top-1 left-12 z-10 sm:left-16">
-          <p className="text-5xl font-semibold tracking-tight text-[oklch(0.82_0.11_192)] sm:text-6xl">
+          <p className="text-5xl font-semibold tracking-tight text-white sm:text-6xl">
             +{projected}%
           </p>
           <p className="mt-1 max-w-[13rem] text-sm leading-snug text-white/70">
@@ -197,7 +197,7 @@ export function GrowthChart() {
                 content={
                   <ChartTooltipContent
                     hideIndicator
-                    className="min-w-40 border-white/15 bg-[oklch(0.26_0.05_262)] text-white [&_.text-muted-foreground]:text-white/70"
+                    className="min-w-40 border-white/15 bg-[oklch(0.22_0_0)] text-white [&_.text-muted-foreground]:text-white/70"
                     labelFormatter={(_, payload) => {
                       const p = payload?.[0]?.payload as
                         | (typeof data)[number]
