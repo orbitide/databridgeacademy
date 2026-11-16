@@ -132,7 +132,7 @@ function MenuLink({ link, pathname }: { link: NavLink; pathname: string }) {
       <NavigationMenuLink
         asChild
         active={active}
-        className="justify-between gap-3 px-4 py-3"
+        className="justify-between gap-3 px-3 py-1.5"
       >
         <Link href={link.href} aria-current={active ? "page" : undefined}>
           <span className="text-base font-medium text-foreground">
@@ -162,7 +162,7 @@ function DropdownPanel({
         <div className="grid grid-cols-2 gap-3">
           {groups.map((group) => (
             <section key={group.label} aria-label={group.label}>
-              <div className="px-4 pt-2 pb-1">
+              <div className="px-3 pt-1 pb-0.5">
                 <p className="text-sm font-semibold tracking-wide text-brand uppercase">
                   {group.label}
                 </p>
@@ -173,10 +173,10 @@ function DropdownPanel({
                 ))}
               </ul>
               {group.footer && (
-                <div className="mt-1 px-0">
+                <div className="mt-0.5 px-0">
                   <NavigationMenuLink
                     asChild
-                    className="justify-between gap-3 px-4 py-3 text-sm font-medium text-brand hover:text-brand"
+                    className="justify-between gap-3 px-3 py-1.5 text-sm font-medium text-brand hover:text-brand"
                   >
                     <Link href={group.footer.href}>
                       {group.footer.title}
@@ -198,7 +198,7 @@ function DropdownPanel({
       <div className="mt-1 border-t pt-1">
         <NavigationMenuLink
           asChild
-          className="justify-between px-4 py-3 text-base font-medium text-brand hover:text-brand"
+          className="justify-between px-3 py-2 text-base font-medium text-brand hover:text-brand"
         >
           <Link href={overview.href}>
             {overview.title}
