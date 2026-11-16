@@ -180,7 +180,7 @@ export function HeroHighlights() {
         dark
         title="Production-grade projects"
         href="/projects"
-        className="xl:absolute xl:bottom-12 xl:-right-5 xl:w-60"
+        className="xl:absolute xl:bottom-12 xl:-right-8 xl:w-[17rem]"
       >
         <ProjectsVisual />
       </OverlayCard>
