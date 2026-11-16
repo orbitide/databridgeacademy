@@ -28,13 +28,13 @@ function OverlayCard({
       <Link
         href={href}
         className={cn(
-          "group block rounded-xl p-4 backdrop-blur-md transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/60",
+          "group block rounded-xl p-4 backdrop-blur-md transition-colors duration-200 outline-none focus-visible:ring-3 focus-visible:ring-ring/60",
           dark
             ? "bg-[oklch(0.2_0.05_262)]/90 text-white hover:bg-[oklch(0.2_0.05_262)]"
-            : "bg-background/60 ring-1 ring-foreground/10 hover:bg-background/75"
+            : "bg-background/60 ring-1 ring-foreground/10 hover:bg-[oklch(0.2_0.05_262)] hover:text-white hover:ring-white/10 focus-visible:bg-[oklch(0.2_0.05_262)] focus-visible:text-white"
         )}
       >
-        <p className="text-sm font-medium">
+        <p className="font-heading text-xl leading-snug font-semibold sm:text-2xl">
           {title}
         </p>
         {children}
@@ -52,7 +52,7 @@ function InstructorsVisual() {
           <span
             key={i}
             className={cn(
-              "flex size-9 items-center justify-center rounded-full ring-2 ring-background",
+              "flex size-9 items-center justify-center rounded-full ring-2 ring-background transition-colors duration-200 group-hover:ring-[oklch(0.2_0.05_262)]",
               i % 2 === 0 ? "bg-brand text-brand-foreground" : "bg-secondary text-foreground/70"
             )}
           >
@@ -60,7 +60,7 @@ function InstructorsVisual() {
           </span>
         ))}
       </div>
-      <p className="mt-2.5 text-[0.8125rem] leading-snug text-muted-foreground">
+      <p className="mt-2.5 text-[0.8125rem] leading-snug text-muted-foreground transition-colors duration-200 group-hover:text-white/75">
         Learn from tech insiders who work in the field.
       </p>
     </div>
@@ -79,22 +79,22 @@ function MarketVisual() {
       >
         <path
           d="M4 46 C 28 44, 40 38, 62 34 S 100 26, 118 16 S 144 8, 156 6 L156 52 L4 52 Z"
-          className="fill-brand/15"
+          className="fill-brand/15 group-hover:fill-[oklch(0.82_0.11_192)]/20"
         />
         <path
           d="M4 46 C 28 44, 40 38, 62 34 S 100 26, 118 16 S 144 8, 156 6"
           fill="none"
           strokeWidth="2"
           strokeLinecap="round"
-          className="stroke-brand"
+          className="stroke-brand group-hover:stroke-[oklch(0.82_0.11_192)]"
         />
-        <circle cx="156" cy="6" r="3.5" className="fill-brand" />
-        <path d="M4 52 H156" strokeWidth="1" className="stroke-foreground/20" />
+        <circle cx="156" cy="6" r="3.5" className="fill-brand group-hover:fill-[oklch(0.82_0.11_192)]" />
+        <path d="M4 52 H156" strokeWidth="1" className="stroke-foreground/20 group-hover:stroke-white/25" />
       </svg>
-      <p className="mt-1.5 flex items-baseline justify-between gap-2 text-[0.8125rem] leading-snug text-muted-foreground">
+      <p className="mt-1.5 flex items-baseline justify-between gap-2 text-[0.8125rem] leading-snug text-muted-foreground transition-colors duration-200 group-hover:text-white/75">
         <span>Where data and AI careers are heading.</span>
       </p>
-      <p className="label-mono mt-1 text-[0.625rem] text-muted-foreground/80">
+      <p className="label-mono mt-1 text-[0.625rem] text-muted-foreground/80 group-hover:text-white/55">
         Illustrative
       </p>
     </div>
