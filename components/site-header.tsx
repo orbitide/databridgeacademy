@@ -87,7 +87,10 @@ function DesktopNav() {
                   <DropdownPanel
                     links={item.children ?? []}
                     groups={item.groups}
-                    overview={{ title: `All ${item.title.toLowerCase()}`, href: item.href }}
+                    overview={{
+                      title: item.overviewLabel ?? `All ${item.title.toLowerCase()}`,
+                      href: item.href,
+                    }}
                     pathname={pathname}
                   />
                 </NavigationMenuContent>
@@ -114,28 +117,28 @@ function DesktopNav() {
   )
 }
 
-function MenuLink({
-  link,
-  pathname,
-  trackActive = true,
-}: {
-  link: NavLink
-  pathname: string
-  /** Grouped links share a route, so they skip the current-page highlight. */
-  trackActive?: boolean
-}) {
-  const active = trackActive && isActivePath(pathname, link.href)
+function ComingSoon({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-[0.6875rem] font-medium tracking-wide text-muted-foreground uppercase">
+      {children}
+    </span>
+  )
+}
+
+function MenuLink({ link, pathname }: { link: NavLink; pathname: string }) {
+  const active = isActivePath(pathname, link.href)
   return (
     <li>
       <NavigationMenuLink
         asChild
         active={active}
-        className="px-4 py-3"
+        className="justify-between gap-3 px-4 py-3"
       >
         <Link href={link.href} aria-current={active ? "page" : undefined}>
           <span className="text-base font-medium text-foreground">
             {link.title}
           </span>
+          {link.badge && <ComingSoon>{link.badge}</ComingSoon>}
         </Link>
       </NavigationMenuLink>
     </li>
@@ -154,26 +157,34 @@ function DropdownPanel({
   pathname: string
 }) {
   return (
-    <div className={groups ? "w-[40rem]" : "w-[20rem]"}>
+    <div className={groups ? "w-[42rem]" : "w-[20rem]"}>
       {groups ? (
         <div className="grid grid-cols-2 gap-3">
           {groups.map((group) => (
             <section key={group.label} aria-label={group.label}>
-              <div className="px-3 pt-2 pb-1">
-                <p className="px-1 text-sm font-semibold tracking-wide text-brand uppercase">
+              <div className="px-4 pt-2 pb-1">
+                <p className="text-sm font-semibold tracking-wide text-brand uppercase">
                   {group.label}
                 </p>
               </div>
               <ul className="grid gap-0.5">
                 {group.links.map((link) => (
-                  <MenuLink
-                    key={link.href}
-                    link={link}
-                    pathname={pathname}
-                    trackActive={false}
-                  />
+                  <MenuLink key={link.href} link={link} pathname={pathname} />
                 ))}
               </ul>
+              {group.footer && (
+                <div className="mt-1 px-0">
+                  <NavigationMenuLink
+                    asChild
+                    className="justify-between gap-3 px-4 py-3 text-sm font-medium text-brand hover:text-brand"
+                  >
+                    <Link href={group.footer.href}>
+                      {group.footer.title}
+                      <ArrowRight className="size-4" />
+                    </Link>
+                  </NavigationMenuLink>
+                </div>
+              )}
             </section>
           ))}
         </div>
@@ -277,13 +288,26 @@ function MobileNav() {
                                 <Link
                                   href={child.href}
                                   onClick={close}
-                                  className="block rounded-md py-2 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                                  className="flex items-center justify-between gap-3 rounded-md py-2 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                                 >
                                   {child.title}
+                                  {child.badge && (
+                                    <ComingSoon>{child.badge}</ComingSoon>
+                                  )}
                                 </Link>
                               </li>
                             ))}
                           </ul>
+                          {group.footer && (
+                            <Link
+                              href={group.footer.href}
+                              onClick={close}
+                              className="mt-1 flex items-center gap-1.5 rounded-md py-2 text-sm font-medium text-brand outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                            >
+                              {group.footer.title}
+                              <ArrowRight className="size-4" />
+                            </Link>
+                          )}
                         </div>
                       ))}
                     </div>

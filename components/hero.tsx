@@ -23,9 +23,9 @@ export function Hero() {
         {/* Copy */}
         <div className="lg:col-span-7 xl:col-span-5">
           <h1 className="font-heading text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl xl:text-[3.25rem]">
-            Learn the skills.
+            Build your
             <br />
-            <span className="text-brand">Build the career.</span>
+            <span className="text-brand">future in data and AI</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">

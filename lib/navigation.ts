@@ -2,13 +2,16 @@ export type NavLink = {
   title: string
   href: string
   description?: string
+  /** Small tag shown next to the title, e.g. "Coming soon". */
+  badge?: string
 }
 
 /** A titled column of links inside a dropdown (e.g. by experience level). */
 export type NavGroup = {
   label: string
-  description: string
   links: NavLink[]
+  /** Optional call-to-action shown at the bottom of the column. */
+  footer?: NavLink
 }
 
 export type NavItem = {
@@ -18,74 +21,88 @@ export type NavItem = {
   children?: NavLink[]
   /** Grouped dropdown columns. When present, used instead of children. */
   groups?: NavGroup[]
+  /** Label for the "see everything" link at the bottom of the dropdown. */
+  overviewLabel?: string
 }
 
-export const programLinks: NavLink[] = [
-  {
-    title: "Data Science",
-    href: "/programs/data-science",
-    description: "Analyze, model, and communicate insights with data.",
-  },
-  {
-    title: "Machine Learning",
-    href: "/programs/machine-learning",
-    description: "Train, evaluate, and deploy predictive models.",
-  },
-  {
-    title: "Artificial Intelligence",
-    href: "/programs/artificial-intelligence",
-    description: "Build applied AI systems and LLM-powered tools.",
-  },
-]
+const programHref = (slug: string) => `/programs/${slug}`
 
-const levelHref = (slug: string, level: "beginner" | "advanced") =>
-  `/programs/${slug}?level=${level}`
-
-/** Programs split by experience level. Copy is a placeholder until syllabi are final. */
+/**
+ * Programs grouped by who they are for. Names and descriptions are
+ * placeholders until the final syllabi are confirmed.
+ */
 export const programGroups: NavGroup[] = [
   {
     label: "For beginners",
-    description: "Start from the fundamentals. No prior experience needed.",
     links: [
       {
+        title: "Data Analytics",
+        href: programHref("data-analytics"),
+        description:
+          "Turn raw data into clear answers with SQL, spreadsheets, and dashboards.",
+      },
+      {
         title: "Data Science",
-        href: levelHref("data-science", "beginner"),
-        description: "Python, statistics, and working with data from scratch.",
+        href: programHref("data-science"),
+        description:
+          "Python, statistics, and modeling, taught from the fundamentals.",
       },
       {
         title: "Machine Learning",
-        href: levelHref("machine-learning", "beginner"),
-        description: "Core ideas and first models, built up step by step.",
+        href: programHref("machine-learning"),
+        description:
+          "Core machine learning concepts and your first working models.",
       },
       {
         title: "Artificial Intelligence",
-        href: levelHref("artificial-intelligence", "beginner"),
-        description: "An introduction to applied AI and language models.",
+        href: programHref("artificial-intelligence"),
+        description:
+          "An applied introduction to AI, language models, and building with them.",
       },
     ],
+    footer: { title: "Not sure? Take the quiz", href: "/programs/quiz" },
   },
   {
-    label: "For advanced & professionals",
-    description: "Go deeper, with the tools and standards used on the job.",
+    label: "For tech professionals",
     links: [
       {
-        title: "Data Science",
-        href: levelHref("data-science", "advanced"),
-        description: "Advanced analytics, experimentation, and communication.",
+        title: "Advanced Machine Learning",
+        href: programHref("advanced-machine-learning"),
+        description:
+          "Modeling, evaluation, and deployment in depth for working engineers.",
       },
       {
-        title: "Machine Learning",
-        href: levelHref("machine-learning", "advanced"),
-        description: "Modeling, evaluation, and deployment in depth.",
+        title: "LLM & Agent Engineering",
+        href: programHref("llm-agent-engineering"),
+        description:
+          "Retrieval, tool use, and evaluation for production language-model systems.",
       },
       {
-        title: "Artificial Intelligence",
-        href: levelHref("artificial-intelligence", "advanced"),
-        description: "Retrieval, agents, and evaluating LLM systems.",
+        title: "MLOps & Production AI",
+        href: programHref("mlops-production-ai"),
+        description:
+          "Ship, monitor, and maintain machine learning systems at scale.",
+        badge: "Coming soon",
+      },
+      {
+        title: "Data Engineering",
+        href: programHref("data-engineering"),
+        description:
+          "Build the pipelines and platforms that data and AI teams rely on.",
+        badge: "Coming soon",
       },
     ],
+    footer: {
+      title: "Take a 3-minute skills audit",
+      href: "/programs/skills-audit",
+    },
   },
 ]
+
+/** Flat list of every program, used for routing and as a mobile fallback. */
+export const programLinks: NavLink[] = programGroups.flatMap(
+  (group) => group.links
+)
 
 export const resourceLinks: NavLink[] = [
   {
@@ -103,6 +120,33 @@ export const resourceLinks: NavLink[] = [
     href: "/resources/learning-resources",
     description: "Free materials to practice and sharpen your skills.",
   },
+  {
+    title: "FAQ",
+    href: "/resources/faq",
+    description: "Answers to common questions about programs and admissions.",
+  },
+]
+
+/** "Why us" dropdown. Existing pages (cohorts, career support, projects, about) live here. */
+export const whyUsGroups: NavGroup[] = [
+  {
+    label: "How we teach",
+    links: [
+      { title: "Structured curriculum", href: "/why-us/curriculum" },
+      { title: "Real-world projects", href: "/projects" },
+      { title: "Mentorship", href: "/why-us/mentorship" },
+      { title: "Meet the instructors", href: "/why-us/instructors" },
+    ],
+  },
+  {
+    label: "Your success",
+    links: [
+      { title: "Career support", href: "/career-support" },
+      { title: "Cohorts & community", href: "/cohorts" },
+      { title: "Student stories", href: "/why-us/student-stories" },
+      { title: "About Data Bridge Academy", href: "/about" },
+    ],
+  },
 ]
 
 export const mainNav: NavItem[] = [
@@ -111,12 +155,21 @@ export const mainNav: NavItem[] = [
     href: "/programs",
     children: programLinks,
     groups: programGroups,
+    overviewLabel: "All programs",
   },
-  { title: "Cohorts", href: "/cohorts" },
-  { title: "Career Support", href: "/career-support" },
-  { title: "Projects", href: "/projects" },
-  { title: "About", href: "/about" },
-  { title: "Resources", href: "/resources", children: resourceLinks },
+  {
+    title: "Why us",
+    href: "/why-us",
+    children: whyUsGroups.flatMap((group) => group.links),
+    groups: whyUsGroups,
+    overviewLabel: "Why Data Bridge Academy",
+  },
+  {
+    title: "Resources",
+    href: "/resources",
+    children: resourceLinks,
+    overviewLabel: "All resources",
+  },
 ]
 
 export const authLinks = {
