@@ -137,19 +137,42 @@
     @apply font-sans;
   }
 }
-/* Blinking binary digits (hero "Production-grade projects" card). */
-@keyframes bit-blink {
+/* Binary digits that flip between 1 and 0 (hero "Production-grade projects" card). */
+@keyframes bit-show-first {
   0%,
-  100% {
-    opacity: 0.15;
+  49.9% {
+    opacity: 1;
   }
-  50% {
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bit-show-second {
+  0%,
+  49.9% {
+    opacity: 0;
+  }
+  50%,
+  100% {
     opacity: 1;
   }
 }
 
+.bit-first {
+  opacity: 1;
+}
+
+.bit-second {
+  opacity: 0;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .bit-blink {
-    animation: bit-blink 2.4s ease-in-out infinite;
+  .bit-first {
+    animation: bit-show-first var(--bit-duration, 1.6s) linear var(--bit-delay, 0s) infinite;
+  }
+  .bit-second {
+    animation: bit-show-second var(--bit-duration, 1.6s) linear var(--bit-delay, 0s) infinite;
   }
 }

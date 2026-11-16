@@ -13,22 +13,35 @@ function OverlayCard({
   title,
   href,
   className,
+  dark = false,
   children,
 }: {
   title: string
   href: string
   className?: string
+  /** Dark navy surface instead of the translucent light one. */
+  dark?: boolean
   children: React.ReactNode
 }) {
   return (
     <li className={className}>
       <Link
         href={href}
-        className="group block rounded-xl bg-background/60 p-4 ring-1 ring-foreground/10 backdrop-blur-md transition-colors outline-none hover:bg-background/75 focus-visible:ring-3 focus-visible:ring-ring/60"
+        className={cn(
+          "group block rounded-xl p-4 backdrop-blur-md transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/60",
+          dark
+            ? "bg-[oklch(0.2_0.05_262)]/90 text-white hover:bg-[oklch(0.2_0.05_262)]"
+            : "bg-background/60 ring-1 ring-foreground/10 hover:bg-background/75"
+        )}
       >
         <p className="flex items-center justify-between gap-2 text-sm font-medium">
           {title}
-          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          <ArrowUpRight
+            className={cn(
+              "size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
+              dark ? "text-white/70" : "text-muted-foreground"
+            )}
+          />
         </p>
         {children}
       </Link>
@@ -94,37 +107,58 @@ function MarketVisual() {
   )
 }
 
-/** Blinking binary: the low-level machinery behind production systems. */
-const binaryRows = ["10110011101001", "01001101010110", "11010010111001", "00101101001110"]
+/** Binary digits that flip between 1 and 0: the machinery behind production systems. */
+const binaryRows = [
+  "10110011101001",
+  "01001101010110",
+  "11010010111001",
+  "00101101001110",
+]
+
+const ACCENT = "oklch(0.82 0.11 192)"
 
 function ProjectsVisual() {
   return (
     <div className="mt-3">
       <div
         aria-hidden
-        className="rounded-md bg-foreground/5 px-3 py-2.5 font-mono text-[0.8125rem] leading-5 tracking-[0.3em]"
+        className="overflow-hidden rounded-md bg-black/30"
       >
-        {binaryRows.map((row, r) => (
-          <div key={r} className="flex justify-between">
-            {row.split("").map((bit, i) => (
-              <span
-                key={i}
-                className={cn(
-                  "bit-blink",
-                  (i + r) % 3 === 0 ? "font-semibold text-brand" : "text-foreground/60"
-                )}
-                style={{
-                  animationDelay: `${(((r + 2) * 7 + i * 5) % 13) * 0.19}s`,
-                  animationDuration: `${2 + ((i + r) % 4) * 0.45}s`,
-                }}
-              >
-                {bit}
-              </span>
-            ))}
-          </div>
-        ))}
+        <div className="px-3 py-2.5 font-mono text-[0.8125rem] leading-5 [mask-image:linear-gradient(to_bottom,transparent,black_24%,black_76%,transparent)]">
+          {binaryRows.map((row, r) => (
+            <div key={r} className="flex justify-between">
+              {row.split("").map((bit, i) => {
+                const other = bit === "1" ? "0" : "1"
+                const delay = (((r + 2) * 7 + i * 5) % 13) * -0.23
+                const duration = 1.2 + ((i + r) % 4) * 0.4
+                const bright = (i + r) % 3 === 0
+                return (
+                  <span
+                    key={i}
+                    className={cn(
+                      "inline-grid",
+                      bright ? "font-semibold" : "text-white/45"
+                    )}
+                    style={
+                      {
+                        "--bit-delay": `${delay}s`,
+                        "--bit-duration": `${duration}s`,
+                        ...(bright
+                          ? { color: ACCENT, textShadow: `0 0 10px ${ACCENT}` }
+                          : null),
+                      } as React.CSSProperties
+                    }
+                  >
+                    <span className="bit-first col-start-1 row-start-1">{bit}</span>
+                    <span className="bit-second col-start-1 row-start-1">{other}</span>
+                  </span>
+                )
+              })}
+            </div>
+          ))}
+        </div>
       </div>
-      <p className="mt-2.5 text-[0.8125rem] leading-snug text-muted-foreground">
+      <p className="mt-2.5 text-[0.8125rem] leading-snug text-white/75">
         Build projects as production-grade systems.
       </p>
     </div>
@@ -149,6 +183,7 @@ export function HeroHighlights() {
         <MarketVisual />
       </OverlayCard>
       <OverlayCard
+        dark
         title="Production-grade projects"
         href="/projects"
         className="xl:absolute xl:bottom-12 xl:-right-5 xl:w-60"
