@@ -28,8 +28,9 @@ export type NavItem = {
 const programHref = (slug: string) => `/programs/${slug}`
 
 /**
- * Programs grouped by who they are for. Names and descriptions are
- * placeholders until the final syllabi are confirmed.
+ * Programs grouped by who they are for. Each entry is a distinct program
+ * with its own focus and outcome. Names and descriptions are placeholders
+ * until the final syllabi are confirmed.
  */
 export const programGroups: NavGroup[] = [
   {
@@ -39,25 +40,31 @@ export const programGroups: NavGroup[] = [
         title: "Data Analytics",
         href: programHref("data-analytics"),
         description:
-          "Turn raw data into clear answers with SQL, spreadsheets, and dashboards.",
+          "Answer business questions with SQL, spreadsheets, and dashboards. No coding background needed.",
       },
       {
         title: "Data Science",
         href: programHref("data-science"),
         description:
-          "Python, statistics, and modeling, taught from the fundamentals.",
+          "Python, statistics, and predictive modeling, from first principles to a full project.",
       },
       {
-        title: "Machine Learning",
-        href: programHref("machine-learning"),
+        title: "AI & Machine Learning",
+        href: programHref("ai-machine-learning"),
         description:
-          "Core machine learning concepts and your first working models.",
+          "Learn how machine learning and modern AI work, and build your first intelligent applications.",
       },
       {
-        title: "Artificial Intelligence",
-        href: programHref("artificial-intelligence"),
+        title: "AI Automation",
+        href: programHref("ai-automation"),
         description:
-          "An applied introduction to AI, language models, and building with them.",
+          "Automate real business workflows with AI tools, APIs, and low-code platforms.",
+      },
+      {
+        title: "Software Engineering with AI",
+        href: programHref("software-engineering-with-ai"),
+        description:
+          "Learn to program and ship software, working alongside AI coding tools.",
       },
     ],
     footer: { title: "Not sure? Take the quiz", href: "/programs/quiz" },
@@ -66,29 +73,35 @@ export const programGroups: NavGroup[] = [
     label: "For tech professionals",
     links: [
       {
-        title: "Advanced Machine Learning",
-        href: programHref("advanced-machine-learning"),
+        title: "Deep Learning",
+        href: programHref("deep-learning"),
         description:
-          "Modeling, evaluation, and deployment in depth for working engineers.",
+          "Neural networks for vision, language, and sequence data, for engineers who already code.",
       },
       {
         title: "LLM & Agent Engineering",
         href: programHref("llm-agent-engineering"),
         description:
-          "Retrieval, tool use, and evaluation for production language-model systems.",
+          "Build language-model applications with retrieval, tool use, and rigorous evaluation.",
+      },
+      {
+        title: "AI Security",
+        href: programHref("ai-security"),
+        description:
+          "Find and defend against threats to machine learning systems and AI-powered products.",
       },
       {
         title: "MLOps & Production AI",
         href: programHref("mlops-production-ai"),
         description:
-          "Ship, monitor, and maintain machine learning systems at scale.",
+          "Deploy, monitor, and maintain machine learning systems at scale.",
         badge: "Coming soon",
       },
       {
         title: "Data Engineering",
         href: programHref("data-engineering"),
         description:
-          "Build the pipelines and platforms that data and AI teams rely on.",
+          "Design the pipelines and platforms that data and AI teams rely on.",
         badge: "Coming soon",
       },
     ],
